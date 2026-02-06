@@ -1,6 +1,8 @@
 package com.example.OTP.Entrance.Backend.Controllers;
 
+import com.example.OTP.Entrance.Backend.Entities.User;
 import com.example.OTP.Entrance.Backend.Entities.VehicleLogEntry;
+import com.example.OTP.Entrance.Backend.Repositories.UserRepository;
 import com.example.OTP.Entrance.Backend.Repositories.VehicleLogEntryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,20 +11,41 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/vehicle-log")
+@CrossOrigin(origins = "http://localhost:4200")
 public class VehicleLogEntryController {
 
     @Autowired
     private VehicleLogEntryRepository repository;
 
-    @PostMapping("/entry")
-    public ResponseEntity<VehicleLogEntry> logEntry(@RequestBody VehicleLogEntry entry) {
-        entry.setEntryDate(LocalDate.now());
-        entry.setEntryTime(LocalTime.now());
-        return ResponseEntity.ok(repository.save(entry));
+    @Autowired
+    private UserRepository userRepository;
+
+    // --- Log a new vehicle entry linked to a User ---
+    @PostMapping("/entry/{idNumber}")
+    public ResponseEntity<?> logEntry(@PathVariable Long idNumber,
+                                      @RequestBody VehicleLogEntry entry) {
+        return userRepository.findById(idNumber).map(user -> {
+            entry.setUser(user);
+            entry.setEntryDate(LocalDate.now());
+            entry.setEntryTime(LocalTime.now());
+            VehicleLogEntry saved = repository.save(entry);
+
+            return ResponseEntity.ok(Map.of(
+                    "entryId", saved.getId(),
+                    "idNumber", user.getIdNumber(),
+                    "registrationNumber", user.getRegNumber(),
+                    "entryDate", saved.getEntryDate(),
+                    "entryTime", saved.getEntryTime()
+            ));
+        }).orElse(ResponseEntity.badRequest().body(Map.of("success", false, "message", "User not found")));
     }
 
+
+    // --- Edit exit time and registration number ---
     @PutMapping("/edit/{id}")
     public ResponseEntity<VehicleLogEntry> editExitAndRegistration(
             @PathVariable Long id,
@@ -42,7 +65,6 @@ public class VehicleLogEntryController {
 
         return ResponseEntity.ok(repository.save(entry));
     }
-
 
     @GetMapping("/today")
     public List<VehicleLogEntry> getTodayLogs() {
