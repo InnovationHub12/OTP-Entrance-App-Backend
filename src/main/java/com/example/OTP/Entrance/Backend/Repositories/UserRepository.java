@@ -5,9 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    boolean existsByIdNumber(Long idNumber);
-    boolean existsByRegNumber(String regNumber);
+public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByRegNumber(String regNumber);
-    Optional<User> findByIdNumber(Long idNumber);
+    Optional<User> findByIdNumber(String idNumber);
 }

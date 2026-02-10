@@ -34,5 +34,7 @@ public class OtpController {
                 "message", isValid ? "OTP verified successfully" : "Invalid OTP"
         ));
     }
+
+
 }
 

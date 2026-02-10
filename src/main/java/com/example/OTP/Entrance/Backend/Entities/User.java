@@ -15,7 +15,7 @@ public class User {
 
     @Id
     @Column(name = "id_number", nullable = false, unique = true)
-    private Long idNumber;
+    private String idNumber;
 
     @Column(nullable = false)
     private String name;
@@ -31,5 +31,4 @@ public class User {
 
     @Column(name = "otp_secret")
     private String otpSecret;
-
 }
