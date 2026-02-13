@@ -198,4 +198,31 @@ public class UserController {
                 )));
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            return ResponseEntity.ok(userRepository.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Failed to fetch users: " + e.getMessage()
+            ));
+        }
+    }
+
+    @DeleteMapping("/{idNumber}")
+    public ResponseEntity<?> deleteUser(@PathVariable String idNumber) {
+        return userRepository.findByIdNumber(idNumber)
+                .map(user -> {
+                    userRepository.delete(user);
+                    return ResponseEntity.ok(Map.of(
+                            "success", true,
+                            "message", "User deleted successfully"
+                    ));
+                })
+                .orElse(ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "message", "User not found"
+                )));
+    }
 }
