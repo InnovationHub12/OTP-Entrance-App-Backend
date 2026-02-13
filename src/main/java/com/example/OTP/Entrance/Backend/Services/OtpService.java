@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
+import java.util.Optional;
 
 @Service
 public class OtpService {
@@ -84,5 +85,10 @@ public class OtpService {
     public boolean verifyQr(String regNumber) {
         return userRepository.existsByRegNumber(regNumber);
     }
+
+    public Optional<User> findUserByRegNumber(String regNumber) {
+        return userRepository.findByRegNumber(regNumber);
+    }
+
 
 }

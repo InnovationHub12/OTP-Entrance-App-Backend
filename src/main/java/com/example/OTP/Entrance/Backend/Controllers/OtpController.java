@@ -39,15 +39,22 @@ public class OtpController {
     public ResponseEntity<Map<String, Object>> scanAndVerify(@RequestBody Map<String, String> body) {
         String regNumber = body.get("regNumber");
 
-        boolean isValid = otpService.verifyQr(regNumber);
-
-        return ResponseEntity.ok(Map.of(
-                "success", isValid,
-                "message", isValid ? "User verified successfully" : "Verification failed"
-        ));
+        return otpService.findUserByRegNumber(regNumber)
+                .map(user -> ResponseEntity.ok(Map.of(
+                        "success", true,
+                        "message", "User verified successfully",
+                        "user", Map.of(
+                                "idNumber", user.getIdNumber(),
+                                "regNumber", user.getRegNumber(),
+                                "name", user.getName(),
+                                "role", user.getRole()
+                        )
+                )))
+                .orElse(ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "message", "Verification failed"
+                )));
     }
-
-
 
 }
 

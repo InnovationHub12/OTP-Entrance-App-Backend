@@ -1,3 +1,4 @@
+com\example\OTP\Entrance\Backend\Controllers\SpaController.class
 com\example\OTP\Entrance\Backend\OtpEntranceBackendApplication.class
 com\example\OTP\Entrance\Backend\Repositories\UserRepository.class
 com\example\OTP\Entrance\Backend\Entities\User$UserBuilder.class

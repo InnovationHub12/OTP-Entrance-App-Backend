@@ -173,4 +173,29 @@ public class UserController {
             ));
         }
     }
+
+    @PostMapping("/login-with-id")
+    public ResponseEntity<?> loginWithId(@RequestBody Map<String, String> request) {
+        String idNumber = request.get("idNumber");
+
+        return userRepository.findByIdNumber(idNumber)
+                .map(user -> {
+                    String qrCodeBase64 = otpService.generateQrCodeForUser(user.getRegNumber());
+
+                    return ResponseEntity.ok(Map.of(
+                            "success", true,
+                            "message", "Login successful",
+                            "role", user.getRole(),
+                            "name", user.getName(),
+                            "regNumber", user.getRegNumber(),
+                            "idNumber", user.getIdNumber(),
+                            "qrCode", qrCodeBase64
+                    ));
+                })
+                .orElse(ResponseEntity.badRequest().body(Map.of(
+                        "success", false,
+                        "message", "User not found"
+                )));
+    }
+
 }
