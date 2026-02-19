@@ -30,11 +30,18 @@ jobs:
         distribution: ${{ env.DISTRIBUTION }}
         java-version: ${{ env.JAVA_VERSION }}
 
-    - name: 'Restore Project Dependencies Using Mvn'
+    - name: 'Run Unit Tests with H2'
       shell: pwsh # For Linux, use bash
       run: |
         pushd './${{ env.POM_XML_DIRECTORY }}'
-        mvn clean package
+        mvn test -Dspring.profiles.active=test
+        popd
+
+    - name: 'Build Project for Deployment'
+      shell: pwsh
+      run: |
+        pushd './${{ env.POM_XML_DIRECTORY }}'
+        mvn clean package -DskipTests
         popd
 
     - name: 'Run Azure Functions Action'
