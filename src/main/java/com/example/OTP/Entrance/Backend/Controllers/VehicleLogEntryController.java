@@ -24,7 +24,7 @@ public class VehicleLogEntryController {
     @Autowired
     private UserRepository userRepository;
 
-    // --- Log a new vehicle entry linked to a User ---
+
     @PostMapping("/entry/{idNumber}")
     public ResponseEntity<?> logEntry(@PathVariable String idNumber,
                                       @RequestBody VehicleLogEntry entry) {
@@ -47,7 +47,6 @@ public class VehicleLogEntryController {
         )));
     }
 
-    // --- Edit exit time and registration number ---
     @PutMapping("/edit/{id}")
     public ResponseEntity<VehicleLogEntry> editExitAndRegistration(
             @PathVariable Long id,
@@ -68,9 +67,19 @@ public class VehicleLogEntryController {
         return ResponseEntity.ok(repository.save(entry));
     }
 
-    // --- Get all logs for today ---
     @GetMapping("/today")
     public List<VehicleLogEntry> getTodayLogs() {
+
         return repository.findByEntryDate(LocalDate.now());
     }
+
+    @GetMapping("/user/{idNumber}")
+    public ResponseEntity<List<VehicleLogEntry>> getLogsForUser(@PathVariable String idNumber) {
+        return userRepository.findByIdNumber(idNumber)
+                .map(user -> ResponseEntity.ok(repository.findByUser(user)))
+                .orElse(ResponseEntity.badRequest().body(List.of()));
+    }
+
+
+
 }

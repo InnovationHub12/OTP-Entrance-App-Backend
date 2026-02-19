@@ -1,5 +1,6 @@
 package com.example.OTP.Entrance.Backend.Repositories;
 
+import com.example.OTP.Entrance.Backend.Entities.User;
 import com.example.OTP.Entrance.Backend.Entities.VehicleLogEntry;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -8,5 +9,6 @@ import java.util.List;
 
 public interface VehicleLogEntryRepository extends JpaRepository<VehicleLogEntry, Long> {
     List<VehicleLogEntry> findByEntryDate(LocalDate date);
+    List<VehicleLogEntry> findByUser(User user);
 }
 
