@@ -34,7 +34,7 @@ jobs:
         shell: pwsh # For Linux, use bash
         run: |
           pushd './${{ env.POM_XML_DIRECTORY }}'
-          mvn test -Dspring.profiles.active=test
+          mvn test "-Dspring.profiles.active=test"
           popd
 
       - name: 'Build Project for Deployment'
